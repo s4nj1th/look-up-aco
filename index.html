@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <!-- Prefer SVG favicons that match the user's color scheme -->
+        <link
+            rel="icon"
+            href="/favicon-light.svg"
+            type="image/svg+xml"
+            media="(prefers-color-scheme: light)"
+        />
+        <link
+            rel="icon"
+            href="/favicon-dark.svg"
+            type="image/svg+xml"
+            media="(prefers-color-scheme: dark)"
+        />
+        <!-- Fallback link that will be updated by script for browsers without link[media] support -->
+        <link
+            id="favicon-fallback"
+            rel="icon"
+            href="/favicon-light.svg"
+            type="image/svg+xml"
+        />
+        <script>
+            (function () {
+                try {
+                    const lightHref = "/favicon-light.svg";
+                    const darkHref = "/favicon-dark.svg";
+                    const fallback =
+                        document.getElementById("favicon-fallback");
+
+                    function setFav(href) {
+                        // update fallback link
+                        if (fallback) fallback.href = href;
+                        // update other icon links without media attribute
+                        document
+                            .querySelectorAll('link[rel~="icon"]')
+                            .forEach((lnk) => {
+                                if (!lnk.media) lnk.href = href;
+                            });
+                    }
+
+                    const mq =
+                        window.matchMedia &&
+                        window.matchMedia("(prefers-color-scheme: dark)");
+                    const prefersDark = mq ? mq.matches : false;
+                    setFav(prefersDark ? darkHref : lightHref);
+
+                    if (mq) {
+                        // modern browsers: use change event
+                        if (typeof mq.addEventListener === "function") {
+                            mq.addEventListener("change", (e) =>
+                                setFav(e.matches ? darkHref : lightHref),
+                            );
+                        } else if (typeof mq.addListener === "function") {
+                            // older browsers
+                            mq.addListener((e) =>
+                                setFav(e.matches ? darkHref : lightHref),
+                            );
+                        }
+                    }
+                } catch (err) {
+                    // noop - don't break page if favicon logic fails
+                }
+            })();
+        </script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Look Up ACO!</title>
+    </head>
+    <body style="width: 100vw; margin: auto">
+        <div id="root" style="margin: auto"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>
