@@ -563,7 +563,7 @@ const ACOVisualizer: React.FC = () => {
               </div>
             </header>
 
-            <div className="flex gap-4 mb-5 flex-wrap justify-center">
+            <div className="flex gap-4 my-10 flex-wrap justify-center">
               <button
                 onClick={() => {
                   setMode("add");
@@ -617,7 +617,7 @@ const ACOVisualizer: React.FC = () => {
               </button>
             </div>
 
-            <div className="mb-5">
+            <div className="my-5">
               <canvas
                 ref={canvasRef}
                 width={1160}
