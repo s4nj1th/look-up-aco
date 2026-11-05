@@ -33,7 +33,7 @@ const StatsPanel: React.FC<StatsPanelProps> = ({
         () =>
             Object.entries(pheromones)
                 .sort(([, a], [, b]) => b - a)
-                .slice(0, 10),
+                .slice(0, 5),
         [pheromones],
     );
     const maxP = topEdges.length > 0 ? topEdges[0][1] : 1;

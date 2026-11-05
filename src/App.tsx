@@ -72,6 +72,7 @@ export default function App() {
         pheromones,
         bestPath,
         theme,
+        params,
     });
 
     const isActive = status === "running" || status === "paused";
@@ -88,9 +89,9 @@ export default function App() {
         >
             <div
                 style={{
-                    maxWidth: "1400px",
+                    maxWidth: "1240px",
                     margin: "0 auto",
-                    padding: "16px 16px 32px",
+                    padding: "24px clamp(20px, 4vw, 48px) 48px",
                 }}
             >
                 {/* Header */}
@@ -99,20 +100,39 @@ export default function App() {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        paddingBottom: "12px",
-                        marginBottom: "14px",
+                        paddingBottom: "14px",
+                        marginBottom: "16px",
                         borderBottom: `1px solid ${bd}`,
                     }}
                 >
-                    <span
+                    <div
                         style={{
-                            fontSize: "14px",
-                            fontWeight: 700,
-                            letterSpacing: "-0.2px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
                         }}
                     >
-                        ACO Path Finder
-                    </span>
+                        <img
+                            src={
+                                dark ? "/favicon-dark.svg" : "/favicon-light.svg"
+                            }
+                            alt="ACO logo"
+                            style={{
+                                width: "22px",
+                                height: "22px",
+                                display: "block",
+                            }}
+                        />
+                        <span
+                            style={{
+                                fontSize: "15px",
+                                fontWeight: 700,
+                                letterSpacing: "-0.2px",
+                            }}
+                        >
+                            ACO Path Finder
+                        </span>
+                    </div>
                     <button
                         onClick={toggleTheme}
                         title="Toggle theme"
@@ -130,11 +150,11 @@ export default function App() {
                     </button>
                 </div>
 
-                {/* Body: left = canvas col, right = stats */}
+                {/* Body: left = canvas col, right = stats & params */}
                 <div
                     style={{
                         display: "flex",
-                        gap: "16px",
+                        gap: "24px",
                         alignItems: "flex-start",
                     }}
                 >
@@ -217,19 +237,17 @@ export default function App() {
                             onSpeedChange={setStepSpeed}
                             dark={dark}
                         />
-
-                        {/* Parameters */}
-                        <ParamsPanel
-                            params={params}
-                            onChange={setParams}
-                            disabled={isActive}
-                            dark={dark}
-                        />
                     </div>
 
-                    {/* ── RIGHT COLUMN: Stats ── */}
-                    <div style={{ width: "220px", flexShrink: 0 }}>
-                        <div style={{ position: "sticky", top: "16px" }}>
+                    {/* ── RIGHT COLUMN: Stats & Parameters ── */}
+                    <div style={{ width: "290px", flexShrink: 0 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "18px",
+                            }}
+                        >
                             <StatsPanel
                                 status={status}
                                 iteration={iteration}
@@ -239,6 +257,12 @@ export default function App() {
                                 bestPath={bestPath}
                                 bestPathDistance={bestPathDistance}
                                 pheromones={pheromones}
+                                dark={dark}
+                            />
+                            <ParamsPanel
+                                params={params}
+                                onChange={setParams}
+                                disabled={isActive}
                                 dark={dark}
                             />
                         </div>

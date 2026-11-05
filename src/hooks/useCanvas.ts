@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from "react";
-import type { GraphNode, Edge, Ant, Mode, Theme } from "../types";
+import type { GraphNode, Edge, Ant, Mode, Theme, ACOParams } from "../types";
 import {
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
@@ -19,6 +19,7 @@ interface DrawParams {
     pheromones: Record<string, number>;
     bestPath: number[];
     theme: Theme;
+    params?: ACOParams;
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -47,6 +48,7 @@ export function useCanvas({
     pheromones,
     bestPath,
     theme,
+    params,
 }: DrawParams) {
     const draw = useCallback(() => {
         const canvas = canvasRef.current;
@@ -75,9 +77,32 @@ export function useCanvas({
             ctx.fillText("click to add nodes", 16, 16);
         }
 
-        // ── pheromone normalization ──
+        // ── pheromone scale based on what the theoretical max can be ──
+        let estMinDistance = 250;
+        if (startNode !== null && endNode !== null) {
+            const s = nodes.find((n) => n.id === startNode);
+            const e = nodes.find((n) => n.id === endNode);
+            if (s && e) {
+                const dx = e.x - s.x;
+                const dy = e.y - s.y;
+                estMinDistance = Math.max(Math.sqrt(dx * dx + dy * dy), 40);
+            }
+        }
+
+        const numAnts = params?.numAnts ?? 10;
+        const qVal = params?.Q ?? 100;
+        const evap = Math.max(params?.evaporationRate ?? 0.5, 0.02);
+        const initP = params?.initialPheromone ?? 0.1;
+
+        // Steady-state theoretical max: (numAnts * Q) / (evaporationRate * minPathDistance)
+        const theoreticalMax = (numAnts * qVal) / (evap * estMinDistance);
         const pVals = Object.values(pheromones);
-        const maxP = pVals.length > 0 ? Math.max(...pVals) : 1;
+        const currentMax = pVals.length > 0 ? Math.max(...pVals) : 0;
+        // Ensure maxP is based on theoretical maximum so initial level doesn't start bright
+        const maxP = Math.max(theoreticalMax, initP * 5, currentMax, 1);
+
+        // Slow pulsing modulation (gentle breathing rhythm ~3.2s period)
+        const pulse = 0.82 + 0.18 * Math.sin(performance.now() * 0.002);
 
         // ── edges ──
         edges.forEach((edge) => {
@@ -89,15 +114,23 @@ export function useCanvas({
                     ? `${edge.from}-${edge.to}`
                     : `${edge.to}-${edge.from}`;
             const p = pheromones[key] ?? 0;
-            const t = maxP > 0 ? Math.min(p / maxP, 1) : 0;
+            const baseT = maxP > 0 ? Math.min(p / maxP, 1) : 0;
+            // Pulsing modulates noticeable pheromone trails
+            const t = baseT > 0.03 ? Math.min(baseT * pulse, 1) : baseT;
 
             ctx.strokeStyle = lerpColor(edgeDim, edgeHot, t);
             ctx.lineWidth = 1 + t * 3.5;
-            ctx.shadowBlur = 0;
+            if (t > 0.15) {
+                ctx.shadowColor = edgeHot;
+                ctx.shadowBlur = t * 6 * pulse;
+            } else {
+                ctx.shadowBlur = 0;
+            }
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
             ctx.stroke();
+            ctx.shadowBlur = 0;
 
             // weight label
             ctx.fillStyle = dimLabel;
@@ -235,10 +268,22 @@ export function useCanvas({
         pheromones,
         bestPath,
         theme,
+        params,
     ]);
 
     useEffect(() => {
-        draw();
+        let animId: number;
+        let running = true;
+        const render = () => {
+            if (!running) return;
+            draw();
+            animId = requestAnimationFrame(render);
+        };
+        animId = requestAnimationFrame(render);
+        return () => {
+            running = false;
+            cancelAnimationFrame(animId);
+        };
     }, [draw]);
 
     return { draw };

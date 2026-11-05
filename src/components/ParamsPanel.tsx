@@ -49,8 +49,8 @@ const Row: React.FC<RowProps> = ({
         <div
             style={{
                 display: "grid",
-                gridTemplateColumns: "120px 1fr 44px",
-                gap: "10px",
+                gridTemplateColumns: "96px 1fr 40px",
+                gap: "8px",
                 alignItems: "center",
                 opacity: disabled ? 0.4 : 1,
                 pointerEvents: disabled ? "none" : "auto",
