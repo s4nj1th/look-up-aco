@@ -1,0 +1,12 @@
+export const NUM_ANTS = 10;
+export const EVAPORATION_RATE = 0.5;
+export const ALPHA = 1;
+export const BETA = 2;
+export const Q = 100;
+export const CANVAS_WIDTH = 1160;
+export const CANVAS_HEIGHT = 600;
+export const NODE_RADIUS = 14;
+export const ANT_RADIUS = 5;
+export const FAVICON_LIGHT = "/favicon-light.svg";
+export const FAVICON_DARK = "/favicon-dark.svg";
+export const THEME_STORAGE_KEY = "theme";

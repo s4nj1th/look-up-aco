@@ -2,90 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom global styles retained and adapted to work with Tailwind */
-:root {
-    --font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-    --line-height: 1.5;
-    --font-weight: 400;
-
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    /* keep explicit font settings for non-Tailwind usages */
-    font-family: var(--font-family);
-    line-height: var(--line-height);
-    font-weight: var(--font-weight);
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-a {
-    font-weight: 500;
-    color: #646cff;
-    text-decoration: inherit;
-}
-a:hover {
-    color: #535bf2;
-}
-
-/* Body layout preserved; using Tailwind utilities where appropriate */
+html,
 body {
     margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
     min-height: 100vh;
-    /* background and color flow from :root */
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    background: #fff;
+    color: #111;
 }
 
-/* Heading */
-h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
+canvas {
+    transition: none !important;
 }
 
-/* Buttons: keep original look but can be replaced by utility classes in components */
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: #ddd;
     cursor: pointer;
-    transition: border-color 0.25s;
+    width: 100%;
+    outline: none;
 }
-button:hover {
-    border-color: #646cff;
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #111;
+    margin-top: -5px;
+    cursor: pointer;
 }
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #111;
+    border: none;
+    cursor: pointer;
+}
+input[type="range"]:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
-/* Light mode overrides */
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
+/* dark */
+.dark body,
+.dark {
+    background: #111;
+    color: #eee;
 }
-
-/*
-Notes:
-- Tailwind directives (@tailwind base/components/utilities) are included at the top.
-- Global custom rules from the original file are preserved so existing visuals remain intact.
-- When using Tailwind utility classes in components, prefer utilities over these globals.
-- Ensure Tailwind is configured (postcss/tailwind.config.js) so these directives are processed.
-*/
+.dark input[type="range"] {
+    background: #333;
+}
+.dark input[type="range"]::-webkit-slider-thumb {
+    background: #eee;
+}
+.dark input[type="range"]::-moz-range-thumb {
+    background: #eee;
+}
